@@ -1,0 +1,10 @@
+#ifndef NETWORK
+#define NETWORK
+
+void network (void);
+void client_close (void);
+
+extern int sock;
+extern struct sockaddr_in sa;
+
+#endif

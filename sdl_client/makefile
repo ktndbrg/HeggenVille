@@ -1,0 +1,33 @@
+.PHONY: clean
+
+vpath %.c src/
+vpath %.h include/
+
+cc = gcc -std=c11 -Wall
+incs = -I include/
+sdl_cflags = `sdl-config --cflags`
+sdl_libs = `sdl-config --libs`
+
+HeggenVille.emc: main.o init.o database.o network.o game_loop.o input.o update.o display.o audio.o
+	$(cc) -o $@ $^ $(sdl_libs)
+main.o: main.c init.h game_loop.h
+	$(cc) -ggdb -c -o $@ $< $(incs) $(sdl_cflags)
+init.o: init.c init.h database.h network.h display.h audio.h
+	$(cc) -ggdb -c -o $@ $< $(incs) $(sdl_cflags)
+database.o: database.c init.h database.h update.h
+	$(cc) -ggdb -c -o $@ $< $(incs) $(sdl_cflags)
+network.o: network.c init.h database.h network.h update.h
+	$(cc) -ggdb -c -o $@ $< $(incs) $(sdl_cflags) -lpthread
+game_loop.o: game_loop.c network.h game_loop.h input.h update.h display.h audio.h 
+	$(cc) -ggdb -c -o $@ $< $(incs) $(sdl_cflags) -lpthread
+input.o: input.c init.h database.h input.h
+	$(cc) -ggdb -c -o $@ $< $(incs) $(sdl_cflags)
+update.o: update.c init.h database.h input.h update.h display.h
+	$(cc) -ggdb -c -o $@ $< $(incs) $(sdl_cflags)
+display.o: display.c init.h database.h display.h
+	$(cc) -ggdb -c -o $@ $< $(incs) $(sdl_cflags)
+audio.o: audio.c init.h
+	$(cc) -ggdb -c -o $@ $< $(incs) $(sdl_cflags)
+
+clean:
+	rm *.o && rm *.emc
